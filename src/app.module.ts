@@ -1,10 +1,38 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { MongoModule } from './mongo/mongo.module';
+import { CommonModule } from './common/common.module';
+import { AuthModule } from './auth/auth.module';
+import { ProfileModule } from './profile/profile.module';
+import { ConfigModule } from '@nestjs/config';
+import { MailModule } from './mail/mail.module';
+import { UsersModule } from './users/users.module';
+import { PatientsModule } from './patients/patients.module';
+import { FamilyMembersModule } from './family-members/family-members.module';
+import { DoctorsModule } from './doctors/doctors.module';
+import { AuthGoogleModule } from './auth-google/auth-google.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ConfigModule.forRoot({
+      envFilePath:
+        process.env.NODE_ENV === 'development'
+          ? 'development.env'
+          : 'production.env',
+      isGlobal: true,
+      expandVariables: true,
+    }),
+    MongoModule,
+    CommonModule,
+    MailModule,
+    AuthModule,
+    AuthGoogleModule,
+    ProfileModule,
+    UsersModule,
+    PatientsModule,
+    FamilyMembersModule,
+    DoctorsModule,
+  ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
