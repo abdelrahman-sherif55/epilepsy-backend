@@ -1,10 +1,7 @@
 import { Exclude, Expose, Transform } from 'class-transformer';
-import { ConfigService } from '@nestjs/config';
-import { Environment } from '../../common/interfaces/environment.interface';
 import { Role } from '../../common/decorators/roles.decorator';
 
 export class ResponseUserDto {
-  static configService: ConfigService<Environment>;
   @Expose({ name: 'id' })
   _id: string;
 
@@ -22,9 +19,7 @@ export class ResponseUserDto {
   }
 
   @Transform(({ value }) => {
-    const baseUrl: string = ResponseUserDto.configService.get('BASE_URL', {
-      infer: true,
-    });
+    const baseUrl: string = process.env.BASE_URL;
     return `${baseUrl}/${value}`;
   })
   image: string;

@@ -66,22 +66,16 @@ export class Features {
   public search(modelName: string): this {
     if (this.reqQuery.search) {
       let query: SearchQuery = {};
-      if (modelName === 'Accounts Ledger') {
+      if (modelName === '') {
         query.$or = [
           { name: new RegExp(this.reqQuery.search, 'i') },
           { code: new RegExp(this.reqQuery.search, 'i') },
         ];
-      } else if (['Sales Invoices', 'Purchases Invoices'].includes(modelName)) {
-        query = { code: new RegExp(this.reqQuery.search, 'i') };
-      } else if (
-        ['collection Invoices', 'Payment Invoices'].includes(modelName)
-      ) {
-        query.$or = [
-          { code: new RegExp(this.reqQuery.search, 'i') },
-          { invoiceCode: new RegExp(this.reqQuery.search, 'i') },
-        ];
       } else {
-        query = { name: new RegExp(this.reqQuery.search, 'i') };
+        query.$or = [
+          { name: new RegExp(this.reqQuery.search, 'i') },
+          { code: new RegExp(this.reqQuery.search, 'i') },
+        ];
       }
       this.mongooseQuery = this.mongooseQuery.find(query);
     }

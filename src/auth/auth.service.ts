@@ -4,15 +4,12 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { UserDocument, Users } from '../users/users.schema';
 import { CreateTokensService } from './create-tokens.service';
-import { Environment } from '../common/interfaces/environment.interface';
 import { MailService } from '../mail/mail.service';
 import { ForgetPasswordDto } from './dtos/forget-password.dto';
 import { VerifyCodeDto } from './dtos/verify-code.dto';
@@ -21,14 +18,19 @@ import { SignupDto } from './dtos/signup.dto';
 import { LoginDto } from './dtos/login.dto';
 import { ResponseUserDto } from '../users/dtos/response-user.dto';
 import { GenerateCode } from '../common/classes/generate-code';
+import { Patients } from '../patients/patients.schema';
+import { FamilyMembers } from '../family-members/family-members.schema';
+import { Doctors } from '../doctors/doctors.schema';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(Users.name) private readonly usersModel: Model<Users>,
+    @InjectModel(Patients.name) private readonly patientsModel: Model<Patients>,
+    @InjectModel(FamilyMembers.name)
+    private readonly familyMembersModel: Model<FamilyMembers>,
+    @InjectModel(Doctors.name) private readonly doctorsModel: Model<Doctors>,
     private readonly createTokensService: CreateTokensService,
-    private readonly configService: ConfigService<Environment>,
-    private readonly jwtService: JwtService,
     private readonly mailService: MailService,
     private readonly codes: GenerateCode,
   ) {}
@@ -44,7 +46,26 @@ export class AuthService {
       ...data,
       code: await this.codes.generateUniqueCode(this.usersModel),
     };
-    const user = await this.usersModel.create(createdData);
+    const user: UserDocument = await this.usersModel.create(createdData);
+    if (user.type === 'patient') {
+      await this.patientsModel.create({
+        code: createdData.code,
+        name: `${data.firstName} ${data.lastName}`,
+        patient: user._id,
+      });
+    } else if (user.type === 'family') {
+      await this.familyMembersModel.create({
+        code: createdData.code,
+        name: `${data.firstName} ${data.lastName}`,
+        familyMember: user._id,
+      });
+    } else {
+      await this.doctorsModel.create({
+        code: createdData.code,
+        name: `${data.firstName} ${data.lastName}`,
+        doctor: user._id,
+      });
+    }
     const accessToken: string = this.createTokensService.AccessToken(user._id);
     return {
       accessToken,

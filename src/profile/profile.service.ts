@@ -8,6 +8,9 @@ import { CreateTokensService } from '../auth/create-tokens.service';
 import { UpdateProfileDto } from './dtos/update-profile.dto';
 import { ChangePasswordDto } from './dtos/change-password.dto';
 import { ResponseUserDto } from '../users/dtos/response-user.dto';
+import { Patients } from '../patients/patients.schema';
+import { FamilyMembers } from '../family-members/family-members.schema';
+import { Doctors } from '../doctors/doctors.schema';
 
 @Injectable()
 export class ProfileService {
@@ -15,6 +18,10 @@ export class ProfileService {
 
   constructor(
     @InjectModel(Users.name) private readonly usersModel: Model<UserDocument>,
+    @InjectModel(Patients.name) private readonly patientsModel: Model<Patients>,
+    @InjectModel(FamilyMembers.name)
+    private readonly familyMembersModel: Model<FamilyMembers>,
+    @InjectModel(Doctors.name) private readonly doctorsModel: Model<Doctors>,
     private readonly createTokensService: CreateTokensService,
   ) {
     this.curd = new Crud<UserDocument>(usersModel, 'users');
@@ -26,6 +33,22 @@ export class ProfileService {
 
   public async updateProfile(User: UserDocument, data: UpdateProfileDto) {
     const user: Users = await this.curd.updateOne(User._id, data);
+    if (user.type === 'patient') {
+      await this.patientsModel.updateOne(
+        { code: user.code },
+        { name: `${user.firstName} ${user.lastName}` },
+      );
+    } else if (user.type === 'family') {
+      await this.familyMembersModel.updateOne(
+        { code: user.code },
+        { name: `${user.firstName} ${user.lastName}` },
+      );
+    } else {
+      await this.doctorsModel.updateOne(
+        { code: user.code },
+        { name: `${user.firstName} ${user.lastName}` },
+      );
+    }
     return {
       message: 'profile updated',
       data: new ResponseUserDto(user),

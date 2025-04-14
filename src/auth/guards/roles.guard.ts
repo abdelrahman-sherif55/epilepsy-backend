@@ -15,7 +15,7 @@ import { CustomRequest } from '../../common/interfaces/custom-request.interface'
 import { Role, ROLES_KEY } from '../../common/decorators/roles.decorator';
 
 @Injectable()
-export class ProtectRoutesGuard implements CanActivate {
+export class RolesGuard implements CanActivate {
   constructor(
     private readonly configService: ConfigService<Environment>,
     private readonly jwtService: JwtService,
