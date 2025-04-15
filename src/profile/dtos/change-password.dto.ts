@@ -14,7 +14,7 @@ export class ChangePasswordDto extends IntersectionType(
     'weight',
   ] as const),
 ) {
-  @IsString({ message: 'current password required' })
   @Length(6, 20, { message: 'password length from 6 to 20' })
+  @IsString({ message: 'current password required' })
   currentPassword: string;
 }

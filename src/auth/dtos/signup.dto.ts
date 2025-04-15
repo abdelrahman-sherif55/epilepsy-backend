@@ -14,8 +14,8 @@ enum UsersType {
 }
 
 export class SignupDto {
-  @IsString({ message: 'email required' })
   @IsEmail({}, { message: 'invalid email' })
+  @IsString({ message: 'email required' })
   email: string;
 
   @IsString({ message: 'first name required' })
@@ -33,18 +33,18 @@ export class SignupDto {
   @IsOptional()
   dateOfBirth: Date;
 
-  @IsString({ message: 'user type required' })
   @IsEnum(UsersType, { message: 'invalid user type' })
+  @IsString({ message: 'user type required' })
   type: UsersType;
 
   @IsOptional()
   weight: number;
 
-  @IsString({ message: 'password required' })
   @Length(6, 20, { message: 'password length from 6 to 20' })
+  @IsString({ message: 'password required' })
   password: string;
 
-  @IsString({ message: 'confirm password required' })
   @Length(6, 20, { message: 'password length from 6 to 20' })
+  @IsString({ message: 'confirm password required' })
   confirmPassword: string;
 }
