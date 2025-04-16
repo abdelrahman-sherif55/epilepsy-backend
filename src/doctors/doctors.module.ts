@@ -4,6 +4,7 @@ import { Doctors, DoctorsSchema } from './doctors.schema';
 import { DoctorsController } from './doctors.controller';
 import { DoctorsService } from './doctors.service';
 import { PatientsModule } from '../patients/patients.module';
+import * as mongoose from 'mongoose';
 
 @Module({
   imports: [
@@ -12,6 +13,17 @@ import { PatientsModule } from '../patients/patients.module';
         name: Doctors.name,
         useFactory: () => {
           const schema = DoctorsSchema;
+          schema.pre(/^find/, function () {
+            const query = this as mongoose.Query<any, any>;
+            query.populate({
+              path: 'patients',
+              select: 'code firstName lastName image phone dateOfBirth weight',
+            });
+            query.populate({
+              path: 'doctor',
+              select: 'code firstName lastName image phone',
+            });
+          });
           return schema;
         },
       },
