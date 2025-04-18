@@ -20,7 +20,7 @@ export class ResponseUserDto {
 
   @Transform(({ value }) => {
     const baseUrl: string = process.env.BASE_URL;
-    return `${baseUrl}/${value}`;
+    return `${baseUrl}/images/users/${value}`;
   })
   image: string;
 

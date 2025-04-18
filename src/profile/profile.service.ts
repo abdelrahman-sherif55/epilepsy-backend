@@ -11,6 +11,8 @@ import { ResponseUserDto } from '../users/dtos/response-user.dto';
 import { Patients } from '../patients/patients.schema';
 import { FamilyMembers } from '../family-members/family-members.schema';
 import { Doctors } from '../doctors/doctors.schema';
+import { deleteFile } from '../common/files/files-validation-factory';
+import { FilePath } from '../common/files/constants/file-count.constants';
 
 @Injectable()
 export class ProfileService {
@@ -32,7 +34,9 @@ export class ProfileService {
   }
 
   public async updateProfile(User: UserDocument, data: UpdateProfileDto) {
-    const user: Users = await this.curd.updateOne(User._id, data);
+    let user: Users = await this.curd.getOne(User._id);
+    if (data.image) deleteFile(`${FilePath.USERS}/${user.image}`);
+    user = await this.curd.updateOne(User._id, data);
     if (user.type === 'patient') {
       await this.patientsModel.updateOne(
         { code: user.code },
