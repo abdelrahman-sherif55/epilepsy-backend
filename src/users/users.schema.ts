@@ -35,6 +35,9 @@ export class Users {
   weight: number;
 
   @Prop()
+  height: number;
+
+  @Prop()
   password: string;
 
   @Prop()

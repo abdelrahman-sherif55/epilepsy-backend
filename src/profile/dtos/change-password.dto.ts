@@ -12,6 +12,7 @@ export class ChangePasswordDto extends IntersectionType(
     'image',
     'phone',
     'weight',
+    'height',
   ] as const),
 ) {
   @Length(6, 20, { message: 'password length from 6 to 20' })
