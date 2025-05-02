@@ -1,5 +1,5 @@
 import { Exclude, Transform } from 'class-transformer';
-import { Users } from '../../users/users.schema';
+import { UserDocument, Users } from '../../users/users.schema';
 
 export class ResponsePatientDto {
   @Exclude()
@@ -47,15 +47,15 @@ export class ResponsePatientDto {
 
   @Transform(({ value }) => {
     const baseUrl: string = process.env.BASE_URL;
-    return {
-      id: value?._id,
-      code: value?.code,
-      fullName: `${value?.firstName} ${value?.lastName}`,
-      image: value?.image ? `${baseUrl}/${value.image}` : undefined,
-      phone: value?.phone,
-    };
+    return value.map((val: UserDocument) => ({
+      id: val?._id,
+      code: val?.code,
+      fullName: `${val?.firstName} ${val?.lastName}`,
+      image: val?.image ? `${baseUrl}/${val.image}` : undefined,
+      phone: val?.phone,
+    }));
   })
-  familyMember: Users;
+  familyMembers: Users[];
 
   @Exclude()
   createdAt: Date;

@@ -16,8 +16,8 @@ export class Patients {
   @Prop({ type: schema.Types.ObjectId, ref: Users.name })
   doctor: Users;
 
-  @Prop({ type: schema.Types.ObjectId, ref: Users.name })
-  familyMember: Users;
+  @Prop([{ type: schema.Types.ObjectId, ref: Users.name }])
+  familyMembers: Users[];
 }
 
 export type PatientDocument = HydratedDocument<Patients>;

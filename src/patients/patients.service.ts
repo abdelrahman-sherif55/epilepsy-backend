@@ -87,8 +87,7 @@ export class PatientsService {
 
   public async addFamilyMember(user: Users, data: AddFamilyMemberDto) {
     let patient: Patients = await this.getPatient(user);
-    if (patient.familyMember)
-      throw new BadRequestException('you already have a family member');
+    if (!patient) throw new BadRequestException('patient not found');
     const familyMember: FamilyMemberDocument =
       await this.familyMembersModel.findOne({
         code: data.familyMember,
@@ -97,7 +96,7 @@ export class PatientsService {
       throw new BadRequestException('Family Member not found or has a patient');
     patient = await this.patientsModel.findOneAndUpdate(
       { code: user.code },
-      { familyMember: familyMember.familyMember },
+      { $addToSet: { familyMembers: familyMember.familyMember } },
       { new: true },
     );
     await familyMember.updateOne({ patient: patient.patient });
@@ -107,18 +106,20 @@ export class PatientsService {
     };
   }
 
-  public async deleteFamilyMember(user: Users) {
+  public async deleteFamilyMember(user: Users, code: string) {
     let patient: PatientDocument = await this.getPatient(user);
-    if (!patient.familyMember)
-      throw new BadRequestException("you don't have family member to delete");
-    const familyMember: UserDocument = patient.familyMember as any;
-    await this.familyMembersModel.updateOne(
-      { familyMember: familyMember._id },
-      { $unset: { patient: '' } },
-    );
+    if (!patient) throw new BadRequestException('patient not found');
+    const familyMember: FamilyMemberDocument =
+      await this.familyMembersModel.findOne({
+        code: code,
+      });
+    if (!familyMember) throw new BadRequestException('family member not found');
+    if (familyMember.patient && familyMember.patient.code !== user.code)
+      throw new BadRequestException('this family member is not yours');
+    await familyMember.updateOne({ $unset: { patient: '' } });
     patient = await this.patientsModel.findOneAndUpdate(
       { code: user.code },
-      { $unset: { familyMember: '' } },
+      { $pull: { familyMembers: familyMember.familyMember } },
       { new: true },
     );
     return {

@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   Query,
   Req,
@@ -51,8 +52,11 @@ export class PatientsController {
     return await this.patientsService.addFamilyMember(request.user, data);
   }
 
-  @Delete('family-member')
-  async deleteFamilyMember(@Req() request: CustomRequest) {
-    return await this.patientsService.deleteFamilyMember(request.user);
+  @Delete('family-member/:code')
+  async deleteFamilyMember(
+    @Req() request: CustomRequest,
+    @Param('code') code: string,
+  ) {
+    return await this.patientsService.deleteFamilyMember(request.user, code);
   }
 }

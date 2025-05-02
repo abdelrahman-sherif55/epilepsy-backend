@@ -49,8 +49,7 @@ export class FamilyMembersService {
     const patient: PatientDocument = await this.patientsModel.findOne({
       code: data.patient,
     });
-    if (!patient || patient.familyMember)
-      throw new BadRequestException('Patient not found or has a Family Member');
+    if (!patient) throw new BadRequestException('Patient not found');
     familyMember = await this.familyMembersModel.findOneAndUpdate(
       { code: user.code },
       { patient: patient.patient },

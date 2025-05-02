@@ -6,6 +6,7 @@ import {
   IsString,
   Length,
 } from 'class-validator';
+import { Gender } from '../../users/gender.enum';
 
 enum UsersType {
   PATIENT = 'patient',
@@ -36,6 +37,10 @@ export class SignupDto {
   @IsEnum(UsersType, { message: 'invalid user type' })
   @IsString({ message: 'user type required' })
   type: UsersType;
+
+  @IsEnum(Gender, { message: 'invalid gender' })
+  @IsString({ message: 'user gender required' })
+  gender: Gender;
 
   @IsOptional()
   weight: number;

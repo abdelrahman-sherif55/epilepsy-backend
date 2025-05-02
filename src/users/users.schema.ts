@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { Role } from '../common/decorators/roles.decorator';
+import { Gender } from './gender.enum';
 
 @Schema({ timestamps: true })
 export class Users {
@@ -30,6 +31,9 @@ export class Users {
 
   @Prop({ enum: ['patient', 'family', 'doctor'] })
   type: Role;
+
+  @Prop({ enum: ['male', 'female'] })
+  gender: Gender;
 
   @Prop()
   weight: number;

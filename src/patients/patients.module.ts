@@ -25,7 +25,7 @@ import { FamilyMembersModule } from '../family-members/family-members.module';
               select: 'code firstName lastName image phone',
             });
             query.populate({
-              path: 'familyMember',
+              path: 'familyMembers',
               select: 'code firstName lastName image phone',
             });
           });
