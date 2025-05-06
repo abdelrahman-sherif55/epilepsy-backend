@@ -33,6 +33,7 @@ export class ResponseDoctorContactsDto {
         phone: val?.phone,
         dateOfBirth: dateOfBirth,
         weight: val?.weight,
+        height: val?.height,
       };
     });
   })

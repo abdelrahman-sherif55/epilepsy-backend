@@ -30,6 +30,7 @@ export class ResponseDoctorDto {
         phone: val?.phone,
         dateOfBirth: dateOfBirth,
         weight: val?.weight,
+        height: val?.height,
       };
     });
   })

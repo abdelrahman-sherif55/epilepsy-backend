@@ -32,6 +32,7 @@ export class ResponseFamilyMemberContactsDto {
       phone: value?.phone,
       dateOfBirth: dateOfBirth,
       weight: value?.weight,
+      height: value?.height,
     };
   })
   patient: Users;

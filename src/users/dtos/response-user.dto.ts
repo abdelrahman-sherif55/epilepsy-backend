@@ -42,6 +42,8 @@ export class ResponseUserDto {
 
   weight: number;
 
+  height: number;
+
   @Exclude()
   googleId: string;
 
