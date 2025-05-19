@@ -27,14 +27,11 @@ export class ResponseUserDto {
   phone: string;
 
   @Transform(({ value }) => {
-    const date = new Date(value)
-      .toLocaleString(undefined, {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      })
-      .split('/');
-    return [date[1], date[0], date[2]].join('/');
+    return new Date(value).toLocaleString('en-GB', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
   })
   dateOfBirth: Date;
 

@@ -47,25 +47,7 @@ export class AuthService {
       code: await this.codes.generateUniqueCode(this.usersModel),
     };
     const user: UserDocument = await this.usersModel.create(createdData);
-    if (user.type === 'patient') {
-      await this.patientsModel.create({
-        code: createdData.code,
-        name: `${data.firstName} ${data.lastName}`,
-        patient: user._id,
-      });
-    } else if (user.type === 'family') {
-      await this.familyMembersModel.create({
-        code: createdData.code,
-        name: `${data.firstName} ${data.lastName}`,
-        familyMember: user._id,
-      });
-    } else {
-      await this.doctorsModel.create({
-        code: createdData.code,
-        name: `${data.firstName} ${data.lastName}`,
-        doctor: user._id,
-      });
-    }
+    await this.createUserRole(createdData, user);
     const accessToken: string = this.createTokensService.AccessToken(user._id);
     return {
       accessToken,
@@ -73,11 +55,37 @@ export class AuthService {
     };
   }
 
+  public async createUserRole(data: any, user: UserDocument) {
+    if (user.type === 'patient') {
+      await this.patientsModel.create({
+        code: data.code,
+        name: `${data.firstName} ${data.lastName}`,
+        patient: user._id,
+      });
+    } else if (user.type === 'family') {
+      await this.familyMembersModel.create({
+        code: data.code,
+        name: `${data.firstName} ${data.lastName}`,
+        familyMember: user._id,
+      });
+    } else {
+      await this.doctorsModel.create({
+        code: data.code,
+        name: `${data.firstName} ${data.lastName}`,
+        doctor: user._id,
+      });
+    }
+  }
+
   public async login(data: LoginDto) {
     const user: UserDocument = await this.usersModel.findOne({
       email: data.email,
     });
-    if (!user || !(await bcrypt.compare(data.password, user.password)))
+    if (
+      !user ||
+      !user.password ||
+      !(await bcrypt.compare(data.password, user.password))
+    )
       throw new BadRequestException('invalid email or password');
     const accessToken: string = this.createTokensService.AccessToken(user._id);
     return {
