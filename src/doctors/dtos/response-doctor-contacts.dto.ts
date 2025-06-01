@@ -16,24 +16,37 @@ export class ResponseDoctorContactsDto {
 
   @Transform(({ value }) => {
     const baseUrl: string = process.env.BASE_URL;
-    return value.map((val: UserDocument) => {
-      const date = new Date(val.dateOfBirth)
-        .toLocaleString(undefined, {
+    return value.map((val: any) => {
+      const dateOfBirth: string = new Date(val.dateOfBirth).toLocaleString(
+        'en-GB',
+        {
           year: 'numeric',
           month: '2-digit',
           day: '2-digit',
-        })
-        .split('/');
-      const dateOfBirth = [date[1], date[0], date[2]].join('/');
+        },
+      );
       return {
         id: val?._id,
         code: val?.code,
         fullName: `${val?.firstName} ${val?.lastName}`,
         image: val?.image ? `${baseUrl}/${val.image}` : undefined,
+        gender: val?.gender,
+        email: val?.email,
         phone: val?.phone,
         dateOfBirth: dateOfBirth,
         weight: val?.weight,
         height: val?.height,
+        familyMembers: val?.familyMembers.map((familyMember: UserDocument) => ({
+          id: familyMember?._id.toString(),
+          code: familyMember?.code,
+          fullName: `${familyMember?.firstName} ${familyMember?.lastName}`,
+          image: familyMember?.image
+            ? `${baseUrl}/${familyMember.image}`
+            : undefined,
+          gender: familyMember?.gender,
+          phone: familyMember?.phone,
+          email: familyMember?.email,
+        })),
       };
     });
   })

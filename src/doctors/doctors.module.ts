@@ -17,11 +17,12 @@ import * as mongoose from 'mongoose';
             const query = this as mongoose.Query<any, any>;
             query.populate({
               path: 'patients',
-              select: 'code firstName lastName image phone dateOfBirth weight',
+              select:
+                'code firstName lastName gender email image phone dateOfBirth weight height',
             });
             query.populate({
               path: 'doctor',
-              select: 'code firstName lastName image phone',
+              select: 'code firstName lastName gender image email phone',
             });
           });
           return schema;

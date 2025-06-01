@@ -33,6 +33,14 @@ export class DoctorsService {
 
   public async getDoctorContacts(user: Users) {
     const doctor: Doctors = await this.getDoctor(user);
+    await Promise.all(
+      doctor.patients.map(async (patient: any) => {
+        const patientDoc: Patients = await this.patientsModel.findOne({
+          code: patient.code,
+        });
+        patient.familyMembers = patientDoc.familyMembers;
+      }),
+    );
     return {
       data: new ResponseDoctorContactsDto(doctor),
     };
@@ -44,7 +52,7 @@ export class DoctorsService {
     const patient: PatientDocument = await this.patientsModel.findOne({
       code: data.patient,
     });
-    if (patient.doctor)
+    if (!patient || patient.doctor)
       throw new BadRequestException('this patient already have a doctor');
     await patient.updateOne({ doctor: doctor.doctor });
     doctor = await this.doctorsModel.findOneAndUpdate(

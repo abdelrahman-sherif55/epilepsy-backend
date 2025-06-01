@@ -14,19 +14,21 @@ export class ResponseDoctorDto {
   @Transform(({ value }) => {
     const baseUrl: string = process.env.BASE_URL;
     return value.map((val: UserDocument) => {
-      const date = new Date(val.dateOfBirth)
-        .toLocaleString(undefined, {
+      const dateOfBirth: string = new Date(val.dateOfBirth).toLocaleString(
+        'en-GB',
+        {
           year: 'numeric',
           month: '2-digit',
           day: '2-digit',
-        })
-        .split('/');
-      const dateOfBirth = [date[1], date[0], date[2]].join('/');
+        },
+      );
       return {
         id: val?._id,
         code: val?.code,
         fullName: `${val?.firstName} ${val?.lastName}`,
         image: val?.image ? `${baseUrl}/${val.image}` : undefined,
+        gender: val?.gender,
+        email: val?.email,
         phone: val?.phone,
         dateOfBirth: dateOfBirth,
         weight: val?.weight,
@@ -43,7 +45,9 @@ export class ResponseDoctorDto {
       code: value?.code,
       fullName: `${value?.firstName} ${value?.lastName}`,
       image: value?.image ? `${baseUrl}/${value.image}` : undefined,
+      gender: value?.gender,
       phone: value?.phone,
+      email: value?.email,
     };
   })
   doctor: Users;
