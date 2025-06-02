@@ -16,23 +16,33 @@ export class ResponseFamilyMemberContactsDto {
 
   @Transform(({ value }) => {
     const baseUrl: string = process.env.BASE_URL;
-    const date = new Date(value.dateOfBirth)
-      .toLocaleString(undefined, {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      })
-      .split('/');
-    const dateOfBirth = [date[1], date[0], date[2]].join('/');
+    const dateOfBirth = new Date(value.dateOfBirth).toLocaleString('en-GB', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
     return {
       id: value?._id,
       code: value?.code,
       fullName: `${value?.firstName} ${value?.lastName}`,
       image: value?.image ? `${baseUrl}/${value.image}` : undefined,
+      gender: value?.gender,
+      email: value?.email,
       phone: value?.phone,
       dateOfBirth: dateOfBirth,
       weight: value?.weight,
       height: value?.height,
+      predictionHistory: value?.predictionHistory.map((prediction: any) => ({
+        channels: prediction?.channels,
+        eeg_data: prediction?.eeg_data,
+        prediction: prediction?.prediction,
+        probabilities: {
+          Ictal: prediction?.probabilities?.Ictal,
+          NonIctal: prediction?.probabilities?.NonIctal,
+          PreIctal: prediction?.probabilities?.PreIctal,
+        },
+        status: prediction?.status,
+      })),
     };
   })
   patient: Users;

@@ -36,7 +36,13 @@ export class FamilyMembersService {
   }
 
   public async getFamilyMemberContacts(user: Users) {
-    const familyMember: FamilyMembers = await this.getFamilyMember(user);
+    const familyMember: any = await this.getFamilyMember(user);
+    if (familyMember?.patient) {
+      const patientDoc: Patients = await this.patientsModel.findOne({
+        code: familyMember.patient.code,
+      });
+      familyMember.patient.predictionHistory = patientDoc.predictionHistory;
+    }
     return {
       data: new ResponseFamilyMemberContactsDto(familyMember),
     };

@@ -36,6 +36,17 @@ export class ResponseDoctorContactsDto {
         dateOfBirth: dateOfBirth,
         weight: val?.weight,
         height: val?.height,
+        predictionHistory: val?.predictionHistory.map((prediction: any) => ({
+          channels: prediction?.channels,
+          eeg_data: prediction?.eeg_data,
+          prediction: prediction?.prediction,
+          probabilities: {
+            Ictal: prediction?.probabilities?.Ictal,
+            NonIctal: prediction?.probabilities?.NonIctal,
+            PreIctal: prediction?.probabilities?.PreIctal,
+          },
+          status: prediction?.status,
+        })),
         familyMembers: val?.familyMembers.map((familyMember: UserDocument) => ({
           id: familyMember?._id.toString(),
           code: familyMember?.code,

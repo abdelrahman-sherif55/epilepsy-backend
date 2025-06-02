@@ -3,6 +3,8 @@
 /node_modules
 /build
 /uploads
+/eeg_backend/uploads
+/eeg_backend/tests
 
 # Logs
 logs

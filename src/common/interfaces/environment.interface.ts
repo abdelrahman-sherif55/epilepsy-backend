@@ -1,6 +1,7 @@
 export interface Environment {
   PORT: number;
   BASE_URL: string;
+  EEG_MODEL_URL: string;
   DB_URI: string;
   ACCESS_SECRET_KEY: string;
   ACCESS_TIME: string;

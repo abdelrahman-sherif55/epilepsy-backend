@@ -1,5 +1,6 @@
 import { Exclude, Expose, Transform } from 'class-transformer';
 import { Role } from '../../common/decorators/roles.decorator';
+import { EegModel } from '../../eeg-model/eeg-model.schema';
 
 export class ResponseUserDto {
   @Expose({ name: 'id' })
@@ -40,6 +41,21 @@ export class ResponseUserDto {
   weight: number;
 
   height: number;
+
+  @Transform(({ value }) => {
+    return value.map((prediction: any) => ({
+      channels: prediction?.channels,
+      eeg_data: prediction?.eeg_data,
+      prediction: prediction?.prediction,
+      probabilities: {
+        Ictal: prediction?.probabilities?.Ictal,
+        NonIctal: prediction?.probabilities?.NonIctal,
+        PreIctal: prediction?.probabilities?.PreIctal,
+      },
+      status: prediction?.status,
+    }));
+  })
+  predictionHistory?: EegModel[];
 
   @Exclude()
   googleId: string;

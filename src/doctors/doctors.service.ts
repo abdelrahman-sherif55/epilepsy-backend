@@ -39,6 +39,7 @@ export class DoctorsService {
           code: patient.code,
         });
         patient.familyMembers = patientDoc.familyMembers;
+        patient.predictionHistory = patientDoc.predictionHistory;
       }),
     );
     return {

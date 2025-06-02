@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as schema } from 'mongoose';
 import { Users } from '../users/users.schema';
+import { EegModel, EegModelSchema } from '../eeg-model/eeg-model.schema';
 
 @Schema({ timestamps: true, id: false })
 export class Patients {
@@ -18,6 +19,9 @@ export class Patients {
 
   @Prop([{ type: schema.Types.ObjectId, ref: Users.name }])
   familyMembers: Users[];
+
+  @Prop([EegModelSchema])
+  predictionHistory: EegModel[];
 }
 
 export type PatientDocument = HydratedDocument<Patients>;

@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { extname } from 'path';
 import * as fs from 'fs';
-import { FileSignatureValidator } from './validators/file-signature.validator';
 import { FileValidator } from '@nestjs/common/pipes/file/file-validator.interface';
 import { FileSizeType, FileType } from './types/file.types';
 import { createFileTypeRegex } from './utils/file.util';
@@ -27,7 +26,7 @@ const createFileValidators = (
     new FileTypeValidator({
       fileType: fileTypeRegex,
     }),
-    new FileSignatureValidator(),
+    // new FileSignatureValidator(),
   ];
 };
 

@@ -30,7 +30,14 @@ export class ProfileService {
   }
 
   public async getProfile(user: Users) {
-    return { data: new ResponseUserDto(JSON.parse(JSON.stringify(user))) };
+    const data: any = JSON.parse(JSON.stringify(user));
+    if (user.type === 'patient') {
+      const patient: Patients = await this.patientsModel.findOne({
+        code: user.code,
+      });
+      data.predictionHistory = patient.predictionHistory;
+    }
+    return { data: new ResponseUserDto(data) };
   }
 
   public async updateProfile(User: UserDocument, data: UpdateProfileDto) {
