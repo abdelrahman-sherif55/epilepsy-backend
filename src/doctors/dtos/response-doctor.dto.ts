@@ -26,7 +26,7 @@ export class ResponseDoctorDto {
         id: val?._id,
         code: val?.code,
         fullName: `${val?.firstName} ${val?.lastName}`,
-        image: val?.image ? `${baseUrl}/${val.image}` : undefined,
+        image: val?.image ? `${baseUrl}/images/users/${val.image}` : undefined,
         gender: val?.gender,
         email: val?.email,
         phone: val?.phone,
@@ -44,7 +44,9 @@ export class ResponseDoctorDto {
       id: value?._id,
       code: value?.code,
       fullName: `${value?.firstName} ${value?.lastName}`,
-      image: value?.image ? `${baseUrl}/${value.image}` : undefined,
+      image: value?.image
+        ? `${baseUrl}/images/users/${value.image}`
+        : undefined,
       gender: value?.gender,
       phone: value?.phone,
       email: value?.email,

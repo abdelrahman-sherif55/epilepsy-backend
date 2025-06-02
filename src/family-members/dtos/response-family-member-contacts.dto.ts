@@ -25,7 +25,9 @@ export class ResponseFamilyMemberContactsDto {
       id: value?._id,
       code: value?.code,
       fullName: `${value?.firstName} ${value?.lastName}`,
-      image: value?.image ? `${baseUrl}/${value.image}` : undefined,
+      image: value?.image
+        ? `${baseUrl}/images/users/${value.image}`
+        : undefined,
       gender: value?.gender,
       email: value?.email,
       phone: value?.phone,

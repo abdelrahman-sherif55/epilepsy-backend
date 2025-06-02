@@ -29,7 +29,7 @@ export class ResponseDoctorContactsDto {
         id: val?._id,
         code: val?.code,
         fullName: `${val?.firstName} ${val?.lastName}`,
-        image: val?.image ? `${baseUrl}/${val.image}` : undefined,
+        image: val?.image ? `${baseUrl}/images/users/${val.image}` : undefined,
         gender: val?.gender,
         email: val?.email,
         phone: val?.phone,
