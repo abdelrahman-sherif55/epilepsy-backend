@@ -18,6 +18,9 @@ export class EegModel {
 
   @Prop()
   status: string;
+
+  @Prop({ default: Date.now })
+  time: Date;
 }
 
 export type EegModelDocument = HydratedDocument<EegModel>;

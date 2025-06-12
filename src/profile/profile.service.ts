@@ -7,12 +7,12 @@ import { UserDocument, Users } from '../users/users.schema';
 import { CreateTokensService } from '../auth/create-tokens.service';
 import { UpdateProfileDto } from './dtos/update-profile.dto';
 import { ChangePasswordDto } from './dtos/change-password.dto';
-import { ResponseUserDto } from '../users/dtos/response-user.dto';
 import { Patients } from '../patients/patients.schema';
 import { FamilyMembers } from '../family-members/family-members.schema';
 import { Doctors } from '../doctors/doctors.schema';
 import { deleteFile } from '../common/files/files-validation-factory';
 import { FilePath } from '../common/files/constants/file-count.constants';
+import { ResponseProfileDto } from './dtos/response-profile.dto';
 
 @Injectable()
 export class ProfileService {
@@ -37,7 +37,7 @@ export class ProfileService {
       });
       data.predictionHistory = patient.predictionHistory;
     }
-    return { data: new ResponseUserDto(data) };
+    return { data: new ResponseProfileDto(data) };
   }
 
   public async updateProfile(User: UserDocument, data: UpdateProfileDto) {
@@ -62,7 +62,7 @@ export class ProfileService {
     }
     return {
       message: 'profile updated',
-      data: new ResponseUserDto(user),
+      data: new ResponseProfileDto(user),
     };
   }
 
@@ -80,7 +80,7 @@ export class ProfileService {
     return {
       message: 'password changed successfully',
       accessToken,
-      data: new ResponseUserDto(user as Users),
+      data: new ResponseProfileDto(user as Users),
     };
   }
 }
