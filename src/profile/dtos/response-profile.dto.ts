@@ -128,6 +128,55 @@ export class ResponseProfileDto {
     return undefined;
   }
 
+  @Expose()
+  get weeklySeizures(): any {
+    if (this.predictionHistory && this.predictionHistory.length > 0) {
+      const result: { day: string; status: 'safe' | 'not safe' }[] = [];
+
+      const today = new Date();
+      let seizure = 0;
+      let safe = 0;
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
+
+        const formattedDay = date.toLocaleDateString('en-GB', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        });
+
+        const hasIctal = this.predictionHistory?.some((prediction) => {
+          const predictionDate = new Date(prediction.time);
+          const formattedPredictionDate = predictionDate.toLocaleDateString(
+            'en-GB',
+            {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+            },
+          );
+          return (
+            formattedPredictionDate === formattedDay &&
+            prediction.prediction === 'Ictal'
+          );
+        });
+        if (hasIctal) {
+          seizure++;
+        } else {
+          safe++;
+        }
+        result.push({
+          day: formattedDay,
+          status: hasIctal ? 'not safe' : 'safe',
+        });
+      }
+
+      return { week: result.reverse(), seizure, safe };
+    }
+    return undefined;
+  }
+
   @Exclude()
   googleId: string;
 

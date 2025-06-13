@@ -27,6 +27,10 @@ export class ResponseFamilyMemberContactsDto {
     let IctalSeizures: any[] = [];
     let timeBetweenSeizures: string = 'only one seizure detected';
     let time: string = '';
+    const result: { day: string; status: 'safe' | 'not safe' }[] = [];
+    const today = new Date();
+    let seizure = 0;
+    let safe = 0;
     if (value?.predictionHistory?.length > 0) {
       predictionLastIndex = value?.predictionHistory?.length - 1;
       predictionTime = new Date(
@@ -60,6 +64,41 @@ export class ResponseFamilyMemberContactsDto {
         const diffDays: number = Math.floor(diffMs / (1000 * 60 * 60 * 24));
         timeBetweenSeizures = `${diffDays} day(s)`;
       }
+    }
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - i);
+
+      const formattedDay = date.toLocaleDateString('en-GB', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      });
+
+      const hasIctal = value?.predictionHistory?.some((prediction) => {
+        const predictionDate = new Date(prediction.time);
+        const formattedPredictionDate = predictionDate.toLocaleDateString(
+          'en-GB',
+          {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+          },
+        );
+        return (
+          formattedPredictionDate === formattedDay &&
+          prediction.prediction === 'Ictal'
+        );
+      });
+      if (hasIctal) {
+        seizure++;
+      } else {
+        safe++;
+      }
+      result.push({
+        day: formattedDay,
+        status: hasIctal ? 'not safe' : 'safe',
+      });
     }
     return {
       id: value?._id,
@@ -104,6 +143,7 @@ export class ResponseFamilyMemberContactsDto {
               timeBetweenSeizures: timeBetweenSeizures,
             }
           : undefined,
+      weeklySeizures: { week: result.reverse(), seizure, safe },
     };
   })
   patient: Users;
