@@ -5,7 +5,7 @@ import * as FormData from 'form-data';
 import { InjectModel } from '@nestjs/mongoose';
 import { Patients } from '../patients/patients.schema';
 import { Model } from 'mongoose';
-import { Users } from '../users/users.schema';
+import { UserDocument, Users } from '../users/users.schema';
 import { ConfigService } from '@nestjs/config';
 import { Environment } from '../common/interfaces/environment.interface';
 import { NotificationsService } from '../notifications/notifications.service';
@@ -20,7 +20,7 @@ export class EegModelService {
     @InjectModel(Users.name) private readonly usersModel: Model<Users>,
   ) {}
 
-  public async uploadEegFile(eegFile: Express.Multer.File, user: Users) {
+  public async uploadEegFile(eegFile: Express.Multer.File, user: UserDocument) {
     if (!eegFile) {
       throw new BadRequestException('No EEG file provided');
     }
@@ -48,10 +48,20 @@ export class EegModelService {
       },
       status: response.data.status,
     };
-    const patient: Patients = await this.patientsModel.findOneAndUpdate(
-      { code: user.code },
-      { $addToSet: { predictionHistory: model } },
-    );
+    let patient: Patients;
+    let patientUser: UserDocument = user;
+    if (user.type === 'patient') {
+      patient = await this.patientsModel.findOneAndUpdate(
+        { code: user.code },
+        { $addToSet: { predictionHistory: model } },
+      );
+    } else {
+      patient = await this.patientsModel.findOneAndUpdate(
+        { familyMembers: user._id },
+        { $addToSet: { predictionHistory: model } },
+      );
+      patientUser = await this.usersModel.findOne({ code: patient.code });
+    }
     if (model.prediction !== 'Non-Ictal') {
       const devicesIds: string[] = [];
       if (patient.doctor) {
@@ -88,7 +98,7 @@ export class EegModelService {
         );
       }
       await this.notificationsService.sendNotification(
-        [user.deviceId],
+        [patientUser.deviceId],
         notificationTitle,
         notificationPatientMessage,
       );

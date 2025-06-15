@@ -21,7 +21,7 @@ export class NotificationsService {
         this.configService.get('NOTIFICATIONS_URL', { infer: true }),
         {
           app_id: this.configService.get('ONESIGNAL_APP_ID', { infer: true }),
-          include_player_ids: deviceIds,
+          include_external_user_ids: deviceIds,
           headings: { en: title },
           contents: { en: message },
         },
