@@ -16,22 +16,26 @@ export class NotificationsService {
     title: string,
     message: string,
   ): Promise<{ success: boolean; data: any }> {
-    const res$ = this.httpService.post(
-      this.configService.get('NOTIFICATIONS_URL', { infer: true }),
-      {
-        app_id: this.configService.get('ONESIGNAL_APP_ID', { infer: true }),
-        include_player_ids: deviceIds,
-        headings: { en: title },
-        contents: { en: message },
-      },
-      {
-        headers: {
-          Authorization: `Basic ${this.configService.get('ONESIGNAL_API_KEY', { infer: true })}`,
-          'Content-Type': 'application/json',
+    try {
+      const res$ = this.httpService.post(
+        this.configService.get('NOTIFICATIONS_URL', { infer: true }),
+        {
+          app_id: this.configService.get('ONESIGNAL_APP_ID', { infer: true }),
+          include_player_ids: deviceIds,
+          headings: { en: title },
+          contents: { en: message },
         },
-      },
-    );
-    const response = await firstValueFrom(res$);
-    return { success: true, data: response };
+        {
+          headers: {
+            Authorization: `Basic ${this.configService.get('ONESIGNAL_API_KEY', { infer: true })}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      const response = await firstValueFrom(res$);
+      return { success: true, data: response };
+    } catch (error) {
+      console.log('Error sending notification:', error);
+    }
   }
 }
