@@ -15,6 +15,9 @@ enum UsersType {
 }
 
 export class SignupDto {
+  @IsString({ message: 'device id required' })
+  deviceId: string;
+
   @IsEmail({}, { message: 'invalid email' })
   @IsString({ message: 'email required' })
   email: string;

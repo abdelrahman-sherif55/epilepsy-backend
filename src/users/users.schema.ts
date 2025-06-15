@@ -12,6 +12,9 @@ export class Users {
   googleId: string;
 
   @Prop()
+  deviceId: string;
+
+  @Prop()
   email: string;
 
   @Prop()

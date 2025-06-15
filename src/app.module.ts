@@ -11,6 +11,7 @@ import { FamilyMembersModule } from './family-members/family-members.module';
 import { DoctorsModule } from './doctors/doctors.module';
 import { AuthGoogleModule } from './auth-google/auth-google.module';
 import { EegModelModule } from './eeg-model/eeg-model.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { EegModelModule } from './eeg-model/eeg-model.module';
     FamilyMembersModule,
     DoctorsModule,
     EegModelModule,
+    NotificationsModule,
   ],
   controllers: [],
   providers: [],

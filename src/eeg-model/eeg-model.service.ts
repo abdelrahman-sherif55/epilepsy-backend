@@ -8,13 +8,16 @@ import { Model } from 'mongoose';
 import { Users } from '../users/users.schema';
 import { ConfigService } from '@nestjs/config';
 import { Environment } from '../common/interfaces/environment.interface';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class EegModelService {
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService<Environment>,
+    private readonly notificationsService: NotificationsService,
     @InjectModel(Patients.name) private readonly patientsModel: Model<Patients>,
+    @InjectModel(Users.name) private readonly usersModel: Model<Users>,
   ) {}
 
   public async uploadEegFile(eegFile: Express.Multer.File, user: Users) {
@@ -45,10 +48,51 @@ export class EegModelService {
       },
       status: response.data.status,
     };
-    await this.patientsModel.findOneAndUpdate(
+    const patient: Patients = await this.patientsModel.findOneAndUpdate(
       { code: user.code },
       { $addToSet: { predictionHistory: model } },
     );
+    if (model.prediction !== 'Non-Ictal') {
+      const devicesIds: string[] = [];
+      if (patient.doctor) {
+        const doctorPatient: Users = await this.usersModel.findOne({
+          code: patient.doctor.code,
+        });
+        devicesIds.push(doctorPatient.deviceId);
+      }
+      if (patient.familyMembers.length > 0) {
+        const familyMembers = await this.usersModel.find({
+          code: { $in: patient.familyMembers.map((member) => member.code) },
+        });
+        familyMembers.forEach((member) => {
+          devicesIds.push(member.deviceId);
+        });
+      }
+      const notificationTitle = 'Warning';
+      let notificationPatientMessage = '';
+      let notificationDoctorMessage = '';
+      if (model.prediction === 'Pre-ictal') {
+        notificationPatientMessage =
+          'You are in a pre-ictal state. Please take precautions.';
+        notificationDoctorMessage = `Patient ${patient.name} is in a pre-ictal state. Please monitor closely.`;
+      } else if (model.prediction === 'Ictal') {
+        notificationPatientMessage =
+          'You are in an ictal state. Please seek immediate medical attention.';
+        notificationDoctorMessage = `Patient ${patient.name} is in an ictal state. Immediate action is required.`;
+      }
+      await this.notificationsService.sendNotification(
+        devicesIds,
+        notificationTitle,
+        notificationDoctorMessage,
+      );
+      await this.notificationsService.sendNotification(
+        [user.deviceId],
+        notificationTitle,
+        notificationPatientMessage,
+      );
+    }
     return { data: model };
   }
 }
+
+// Pre-ictal, Ictal, Non-Ictal

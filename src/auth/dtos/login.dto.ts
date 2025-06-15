@@ -8,4 +8,7 @@ export class LoginDto {
   @Length(6, 20, { message: 'password length from 6 to 20' })
   @IsString({ message: 'password required' })
   password: string;
+
+  @IsString({ message: 'device id required' })
+  deviceId: string;
 }

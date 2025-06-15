@@ -87,6 +87,8 @@ export class AuthService {
       !(await bcrypt.compare(data.password, user.password))
     )
       throw new BadRequestException('invalid email or password');
+    user.deviceId = data.deviceId;
+    await user.save();
     const accessToken: string = this.createTokensService.AccessToken(user._id);
     return {
       accessToken,
