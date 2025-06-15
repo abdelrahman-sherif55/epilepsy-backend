@@ -80,11 +80,13 @@ export class EegModelService {
           'You are in an ictal state. Please seek immediate medical attention.';
         notificationDoctorMessage = `Patient ${patient.name} is in an ictal state. Immediate action is required.`;
       }
-      await this.notificationsService.sendNotification(
-        devicesIds,
-        notificationTitle,
-        notificationDoctorMessage,
-      );
+      if (devicesIds.length > 0) {
+        await this.notificationsService.sendNotification(
+          devicesIds,
+          notificationTitle,
+          notificationDoctorMessage,
+        );
+      }
       await this.notificationsService.sendNotification(
         [user.deviceId],
         notificationTitle,
