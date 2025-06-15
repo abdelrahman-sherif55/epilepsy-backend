@@ -115,28 +115,30 @@ export class ResponseDoctorContactsDto {
         dateOfBirth: dateOfBirth,
         weight: val?.weight,
         height: val?.height,
-        predictionGraph:
-          predictionLastIndex > -1
-            ? {
-                channels: val.predictionHistory[predictionLastIndex]?.channels,
-                eeg_data: val.predictionHistory[predictionLastIndex]?.eeg_data,
-                prediction:
-                  val.predictionHistory[predictionLastIndex]?.prediction,
-                probabilities: {
-                  Ictal:
-                    val.predictionHistory[predictionLastIndex]?.probabilities
-                      ?.Ictal,
-                  NonIctal:
-                    val.predictionHistory[predictionLastIndex]?.probabilities
-                      ?.NonIctal,
-                  PreIctal:
-                    val.predictionHistory[predictionLastIndex]?.probabilities
-                      ?.PreIctal,
-                },
-                status: val.predictionHistory[predictionLastIndex]?.status,
-                time: predictionTime,
-              }
-            : undefined,
+        // predictionGraph:
+        //   predictionLastIndex > -1
+        //     ? {
+        //         channels: val.predictionHistory[predictionLastIndex]?.channels,
+        //         eeg_data: val.predictionHistory[predictionLastIndex]?.eeg_data,
+        //         prediction:
+        //           val.predictionHistory[predictionLastIndex]?.prediction,
+        //         probabilities: {
+        //           Ictal:
+        //             val.predictionHistory[predictionLastIndex]?.probabilities
+        //               ?.Ictal,
+        //           NonIctal:
+        //             val.predictionHistory[predictionLastIndex]?.probabilities
+        //               ?.NonIctal,
+        //           PreIctal:
+        //             val.predictionHistory[predictionLastIndex]?.probabilities
+        //               ?.PreIctal,
+        //         },
+        //         status: val.predictionHistory[predictionLastIndex]?.status,
+        //         time: predictionTime,
+        //       }
+        //     : undefined,
+        predictionStatus:
+          val.predictionHistory[predictionLastIndex]?.prediction,
         predictionSeizure:
           IctalSeizures.length > 0
             ? {

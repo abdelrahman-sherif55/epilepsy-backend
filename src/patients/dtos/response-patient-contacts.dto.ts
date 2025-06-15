@@ -1,5 +1,6 @@
 import { Exclude, Transform } from 'class-transformer';
 import { UserDocument, Users } from '../../users/users.schema';
+import { EegModel } from '../../eeg-model/eeg-model.schema';
 
 export class ResponsePatientContactsDto {
   @Exclude()
@@ -13,6 +14,9 @@ export class ResponsePatientContactsDto {
 
   @Exclude()
   patient: Users;
+
+  @Exclude()
+  predictionHistory: EegModel[];
 
   @Transform(({ value }) => {
     const baseUrl: string = process.env.BASE_URL;
