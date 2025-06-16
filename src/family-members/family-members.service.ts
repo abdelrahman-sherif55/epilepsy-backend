@@ -42,6 +42,7 @@ export class FamilyMembersService {
         code: familyMember.patient.code,
       });
       familyMember.patient.predictionHistory = patientDoc.predictionHistory;
+      familyMember.patient.doctor = patientDoc.doctor;
     }
     return {
       data: new ResponseFamilyMemberContactsDto(familyMember),

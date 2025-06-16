@@ -144,6 +144,17 @@ export class ResponseFamilyMemberContactsDto {
             }
           : undefined,
       weeklySeizures: { week: result.reverse(), seizure, safe },
+      doctor: {
+        id: value?.doctor?._id.toString(),
+        code: value?.doctor?.code,
+        fullName: `${value?.doctor?.firstName} ${value?.doctor?.lastName}`,
+        image: value?.doctor?.image
+          ? `${baseUrl}/images/users/${value.doctor.image}`
+          : undefined,
+        email: value?.doctor?.email,
+        phone: value?.doctor?.phone,
+        gender: value?.doctor?.gender,
+      },
     };
   })
   patient: Users;
