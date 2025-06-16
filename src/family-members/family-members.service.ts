@@ -61,7 +61,9 @@ export class FamilyMembersService {
       { patient: patient.patient },
       { new: true },
     );
-    await patient.updateOne({ familyMember: familyMember.familyMember });
+    await patient.updateOne({
+      $addToSet: { familyMembers: familyMember.familyMember },
+    });
     return {
       message: 'patient added successfully',
       data: new ResponseFamilyMemberContactsDto(
@@ -75,9 +77,10 @@ export class FamilyMembersService {
     if (!familyMember.patient)
       throw new BadRequestException("you don't have patient to delete");
     const patient: UserDocument = familyMember.patient as any;
+    const familyMemberUser: UserDocument = familyMember.familyMember as any;
     await this.patientsModel.updateOne(
       { patient: patient._id },
-      { $unset: { familyMember: '' } },
+      { $pull: { familyMembers: familyMemberUser._id } },
     );
     familyMember = await this.familyMembersModel.findOneAndUpdate(
       { code: user.code },

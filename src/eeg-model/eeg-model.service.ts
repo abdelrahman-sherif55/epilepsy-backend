@@ -60,6 +60,9 @@ export class EegModelService {
         { familyMembers: user._id },
         { $addToSet: { predictionHistory: model } },
       );
+      if (!patient) {
+        throw new BadRequestException("you don't have patient assigned");
+      }
       patientUser = await this.usersModel.findOne({ code: patient.code });
     }
     if (model.prediction !== 'Non-Ictal') {
